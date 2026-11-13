@@ -16,11 +16,17 @@ and confirm the sensor appears under `/sys/bus/w1/devices/`.
 
 ## Install and run
 
-Keep the script executable and run it with Bash:
+Install the script in a system-wide location so the Zabbix service account can
+access it:
+
+```bash
+sudo install -o root -g root -m 755 tanktemp.sh /usr/local/bin/tanktemp.sh
+```
+
+Run it with Bash:
 
 ```sh
-chmod +x /home/andrea/SCRIPTS/fishtank/tanktemp.sh
-/bin/bash /home/andrea/SCRIPTS/fishtank/tanktemp.sh
+/bin/bash /usr/local/bin/tanktemp.sh
 ```
 
 By default, the script selects the first DS18B20 device it finds. To select a
@@ -28,13 +34,13 @@ specific sensor, set `W1_DEVICE` to its device directory:
 
 ```sh
 W1_DEVICE=/sys/bus/w1/devices/28-000000bab6d6 \
-  /bin/bash /home/andrea/SCRIPTS/fishtank/tanktemp.sh
+  /bin/bash /usr/local/bin/tanktemp.sh
 ```
 
 Use `--zabbix` to print only the numeric Celsius value:
 
 ```sh
-/bin/bash /home/andrea/SCRIPTS/fishtank/tanktemp.sh --zabbix
+/bin/bash /usr/local/bin/tanktemp.sh --zabbix
 ```
 
 ## Zabbix Agent 2
@@ -43,7 +49,7 @@ Add a user parameter to an Agent 2 configuration file (for example, in
 `/etc/zabbix/zabbix_agent2.d/`):
 
 ```ini
-UserParameter=fish.tank.temperature,/bin/bash /home/andrea/SCRIPTS/fishtank/tanktemp.sh --zabbix
+UserParameter=fish.tank.temperature,/bin/bash /usr/local/bin/tanktemp.sh --zabbix
 ```
 
 The explicit `/bin/bash` is important: Zabbix may execute user parameters
@@ -62,5 +68,5 @@ If the test reports that the sensor is missing, verify sensor availability and
 permissions, then test the script as the agent user:
 
 ```sh
-sudo -u zabbix /bin/bash /home/andrea/SCRIPTS/fishtank/tanktemp.sh --zabbix
+sudo -u zabbix /bin/bash /usr/local/bin/tanktemp.sh --zabbix
 ```
